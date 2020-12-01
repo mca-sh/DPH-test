@@ -16,11 +16,31 @@ end
 % get handle to MASH-FRET's figure
 h_fig = gcf;
 h = guidata(h_fig);
+prev_mute = h.mute_actions;
+h.mute_actions = true;
+guidata(h_fig,h);
 
 % list all preset files
 flist = dir([pname,'*.mat']);
 F = size(flist,1);
+nb = 0;
+titer = [];
+td = 0;
 for f = 1:F
+    tid = tic;
+    if td>0
+        tleft = (F-f+1)*td;
+        hrs = fix(tleft/3600);
+        mns = fix((tleft-hrs*3600)/60);
+        sec = round(tleft-hrs*3600-mns*60);
+        nb = dispProgress(sprintf(['Simulate data. Process file %i/%i: %s',...
+            '\nremaining time: %i:%i:%i'],f,F,flist(f,1).name,hrs,mns,sec),...
+            nb);
+    else
+        nb = dispProgress(sprintf(['Simulate data. Process file %i/%i: %s',...
+            '\nremaining time: estimating..'],f,F,flist(f,1).name),nb);
+    end
+    
     % remove previous preset file
     if strcmp(h.pushbutton_simRemPrm.Enable,'on')
         pushbutton_simRemPrm_Callback(h.pushbutton_simRemPrm,[],h_fig);
@@ -37,4 +57,13 @@ for f = 1:F
     end
     pushbutton_startSim_Callback(h.pushbutton_startSim,[],h_fig);
     pushbutton_exportSim_Callback({pname_out,name},[],h_fig);
+    
+    titer = cat(2,titer,toc(tid));
+    td = mean(titer);
 end
+
+h = guidata(h_fig);
+h.mute_actions = prev_mute;
+guidata(h_fig,h);
+
+disp('Routine completed!');
