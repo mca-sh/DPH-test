@@ -53,7 +53,7 @@ for d = 1:D
             'time: %i:%i:%i\n'],d,D,dlist(d,1).name,hrs,mns,sec);
     else
         fprintf(['Analyze data. Process data set %i/%i: %s\nremaining ',...
-            'time: estimating..'],d,D,dlist(f,1).name);
+            'time: estimating..\n'],d,D,dlist(d,1).name);
     end
     
     % set root folder
@@ -61,6 +61,13 @@ for d = 1:D
 
     % import files in TA and select FRET data
     fprintf('Import files ...\n');
+    pname_in = [pname,dlist(d,1).name,filesep,'traces_ASCII',filesep];
+    flist = dir([pname_in,'*.txt']);
+    F = size(flist,1);
+    fnames = cell(1,F);
+    for f = 1:F
+        fnames{f} = flist(f,1).name;
+    end
     pushbutton_TDPaddProj_Callback({pname_in,fnames},[],h_fig);
     h.popupmenu_TDPdataType.Value = 3;
     popupmenu_TDPdataType_Callback(h.popupmenu_TDPdataType,[],h_fig);
