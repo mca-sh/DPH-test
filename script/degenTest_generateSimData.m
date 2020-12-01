@@ -23,7 +23,6 @@ guidata(h_fig,h);
 % list all preset files
 flist = dir([pname,'*.mat']);
 F = size(flist,1);
-nb = 0;
 titer = [];
 td = 0;
 for f = 1:F
@@ -33,12 +32,11 @@ for f = 1:F
         hrs = fix(tleft/3600);
         mns = fix((tleft-hrs*3600)/60);
         sec = round(tleft-hrs*3600-mns*60);
-        nb = dispProgress(sprintf(['Simulate data. Process file %i/%i: %s',...
-            '\nremaining time: %i:%i:%i'],f,F,flist(f,1).name,hrs,mns,sec),...
-            nb);
+        fprintf(['Simulate data. Process file %i/%i: %s\nremaining time: ',...
+            '%i:%i:%i\n'],f,F,flist(f,1).name,hrs,mns,sec);
     else
-        nb = dispProgress(sprintf(['Simulate data. Process file %i/%i: %s',...
-            '\nremaining time: estimating..'],f,F,flist(f,1).name),nb);
+        fprintf(['Simulate data. Process file %i/%i: %s\nremaining time: ',...
+            'estimating..'],f,F,flist(f,1).name);
     end
     
     % remove previous preset file
