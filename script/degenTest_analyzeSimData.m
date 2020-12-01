@@ -11,12 +11,6 @@ function degenTest_analyzeSimData(pname)
 % degenTest_analyzeSimData('C:\Users\mimi\Documents\MyDataFolder\degenerated_test\testdata');
 
 % default
-deblurr = true; % remove blurr states and rewrite in files
-if deblurr
-    nHead = 2; % number of header line in files
-    col = 8; % file column where FRET state sequences a written
-    nCols = 9; % number of columns in file
-end
 V = 2; % number of states values
 nRep = 5; % number of GMM iniializations
 Dmax = 4; % max. number of degenerated states
@@ -44,63 +38,24 @@ for d = 1:D
 end
 dlist(excl,:) = [];
 
-% deblurr sequences and re-write file
-D = size(dlist,1);
-nb = 0;
-totIter = D*250;
-titer = [];
-td = 40;
-if deblurr
-    for d = 1:D
-        tid = tic;
-        
-        % import ASCII files in TP
-        pname_in = [pname,dlist(d,1).name,filesep,'traces_ASCII',filesep];
-        flist = dir([pname_in,'*.txt']);
-        F = size(flist,1);
-        fnames = cell(1,F);
-        for f = 1:F
-            fnames{f} = flist(f,1).name;
-
-            % read data
-            fid = fopen([pname_in,fnames{f}],'r');
-            headers = cell(1,nHead);
-            for head = 1:nHead
-                headers{head} = fgetl(fid);
-            end
-            dat = [];
-            while ~feof(fid)
-                dat = cat(1,dat,str2num(fgetl(fid)));
-            end
-            fclose(fid);
-            
-            % deblurr data
-%             dat(:,col) = deblurrSeq(dat(:,col));
-            dat(dat(:,col)==-1,:) = [];
-            
-            % save to file
-            fid = fopen([pname_in,fnames{f}],'Wt');
-            for head = 1:nHead
-                fprintf(fid,[headers{head},'\n']);
-            end
-            fprintf(fid,['%d',repmat('\t%d',[1,nCols-1]),'\n'],dat');
-            fclose(fid);
-
-            tleft = (totIter-(d-1)*250-f)*td/250;
-            hrs = fix(tleft/3600);
-            mns = fix((tleft-hrs*3600)/60);
-            sec = round(tleft-hrs*3600-mns*60);
-            nb = dispProgress(...
-                sprintf('Deblurr data: %i:%i:%i left...',hrs,mns,sec),nb);
-        end
-        
-        titer = cat(2,titer,toc(tid));
-        td = mean(titer);
-    end
-end
-
 % analyze data
+D = size(dlist,1);
+titer = [];
+td = 0;
 for d = 1:D
+    tid = tic;
+    if td>0
+        tleft = (D-d+1)*td;
+        hrs = fix(tleft/3600);
+        mns = fix((tleft-hrs*3600)/60);
+        sec = round(tleft-hrs*3600-mns*60);
+        fprintf(['Analyze data. Process data set %i/%i: %s\nremaining ',...
+            'time: %i:%i:%i\n'],d,D,dlist(d,1).name,hrs,mns,sec);
+    else
+        fprintf(['Analyze data. Process data set %i/%i: %s\nremaining ',...
+            'time: estimating..'],d,D,dlist(f,1).name);
+    end
+    
     % set root folder
     pushbutton_rootFolder_Callback({[pname,dlist(d,1).name]},[],h_fig);
 
@@ -154,6 +109,9 @@ for d = 1:D
     pushbutton_TDPsaveProj_Callback(...
         {[pname,dlist(d,1).name],[dlist(d,1).name,'.mash']},[],h_fig);
     pushbutton_TDPremProj_Callback(h.pushbutton_TDPremProj,[],h_fig);
+    
+    titer = cat(2,titer,toc(tid));
+    td = mean(titer);
 end
 
 h = guidata(h_fig);
