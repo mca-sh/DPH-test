@@ -56,6 +56,34 @@ for f = 1:F
     pushbutton_startSim_Callback(h.pushbutton_startSim,[],h_fig);
     pushbutton_exportSim_Callback({pname_out,name},[],h_fig);
     
+    % save effective model parameters
+    h = guidata(h_fig);
+    expT = 1/h.param.sim.rate;
+    discr = h.results.sim.dat_id{5};
+    J = h.param.sim.nbStates;
+    N = numel(discr);
+    ini_prob = zeros(1,J);
+    Ntrs = zeros(J);
+    pop = zeros(J,1);
+    for n = 1:N
+        dt = getDtFromDiscr(discr{n},expT);
+        ini_prob(dt(1,2)) = ini_prob(dt(1,2))+1;
+        for j1 = 1:J
+            pop(j1) = pop(j1) + sum(dt(dt(:,2)==j1,1)); % seconds
+            for j2 = 1:J
+                if j1==j2
+                    continue
+                end
+                Ntrs(j1,j2) = Ntrs(j1,j2) + ...
+                    sum(dt(:,2)==j1 & dt(:,3)==j2);
+            end
+        end
+    end
+    trans_rates = Ntrs./repmat(pop,1,J);
+    pop = (pop/sum(pop))';
+    ini_prob = ini_prob/sum(ini_prob);
+    save([pname,name,'_eff.mat'],'trans_rates','ini_prob','pop','-mat');
+    
     titer = cat(2,titer,toc(tid));
     td = mean(titer);
 end
