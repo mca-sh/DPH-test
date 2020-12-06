@@ -7,17 +7,15 @@ These routines are used in order to assess:
 1. The use of **discrete phase-type distributions (DPH)** to model in single molecule **kinetic heterogeneity** in ensemble dwell time histogram
 2. The accuracy of the **HMM maximum likelihood estimator** (*i.e.*, without further model selection) given by the Baum-Welch algorithm applied to single molecule **states sequences** (*i.e.*, with a 0-1 binary event matrix)
 
-Both methods are part of the analysis workflow of MASH-FRET's Transition analysis module.
-
-## Method
+which are both part of the analysis workflow of MASH-FRET's Transition analysis module.
 
 To address these problems, single molecule state sequences are simulated with different state degeneracies (goal 1) and for all different transition paths allowed for each state configuration (goal 2). 
 Simulated state sequences are analyzed in MASH-FRET and the analysis output, in terms of number of degenerated states and transition paths, is then compared to the simulation ground truth.
 
 ## How to
 
-Preliminary steps:
-1. open MASH-FRET by following [these steps](https://rna-fretools.github.io/MASH-FRET/Getting_started.html#installation)
+### Setup
+1. DPH-test uses MASH-FRET interface: open MASH-FRET by following [these steps](https://rna-fretools.github.io/MASH-FRET/Getting_started.html#installation)
 2. add DPH-test to MATLAB's search path by going to `Home → Set Path → Add Folder`
 
 ### Simulate 2-state synthetic data sets
