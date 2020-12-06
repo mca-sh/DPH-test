@@ -2,7 +2,7 @@
 
 ## Description
 
-DPH-test contains automated routine scripts that controls [MASH-FRET](https://github.com/RNA-FRETools/MASH-FRET) inferace.
+DPH-test contains automated routine scripts that control [MASH-FRET](https://github.com/RNA-FRETools/MASH-FRET) inferace.
 These routines are used in order to assess:
 1. The use of **discrete phase-type distributions (DPH)** to model in single molecule **kinetic heterogeneity** in ensemble dwell time histogram
 2. The accuracy of the **HMM maximum likelihood estimator** (*i.e.*, without further model selection) given by the Baum-Welch algorithm apllied to single molecule **states sequences** (*i.e.*, with a 0-1 binary event matrix)
