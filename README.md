@@ -36,7 +36,6 @@ Run the command `degenTest_analyzeSimData('C:\testdata')` to compare models infe
 
 <img src="images/DPH-test_perf-summary.png">
 
-<span style="color:#66ff66">Green</span>: MASH-FRET found the correct number of degenerated states and the correct transtion path
-
-Orange: MASH-FRET found the correct number of degenerated states but the wrong transition path
+Green: MASH-FRET found the correct number of degenerated states and the correct transtion path   
+Orange: MASH-FRET found the correct number of degenerated states but the wrong transition path   
 Red: MASH-FRET found the wrong number of degenerated states
