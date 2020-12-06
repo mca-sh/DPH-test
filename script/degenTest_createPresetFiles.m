@@ -1,5 +1,5 @@
-function degenTest_createPresetFiles(Dmax,pname)
-% degenTest_createPresetFiles(Dmax,pname)
+function degenTest_createPresetFiles(Dmax,Jmax,pname)
+% degenTest_createPresetFiles(Dmax,Jmax,pname)
 %
 % Generate preset files used in paper for 2 states and a maximum degeneracy complexity `Dmax`
 % State lifetimes are evenly log-distributed
@@ -7,12 +7,14 @@ function degenTest_createPresetFiles(Dmax,pname)
 % Initial state probabilities are identical for each state.
 % Files are exported in folder `pname`
 %
+% Dmax: maximum number of degenerated level for one state value
+% Jmax: maximum total number of states (long to compute otherwise)
+% pname: dump directory
+%
 % example:
-% degenTest_createPresetFiles(4,'C:\Users\mimi\Documents\MyDataFolder\degenerated_test\testdata');
+% degenTest_createPresetFiles(3,4,'C:\Users\mimi\Documents\MyDataFolder\degenerated_test\testdata');
 
 % default
-Jmax0 = 4; % maximum number of states (long to compute otherwise)
-V = 2; % number of state values
 vals = [0.2,0.7]; % state values
 N = 250; % number of trajectories
 wmin = 0.1; % minimum random
@@ -22,7 +24,8 @@ if pname(end)~=filesep
 end
 
 % get all possible transition matrices
-Jmax = min([Dmax*V,Jmax0]);
+V = numel(vals);
+Jmax = min([Dmax*V,Jmax]);
 Jmin = V;
 trans_mat = cell(1,Jmax);
 for J = Jmin:Jmax

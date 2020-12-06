@@ -251,15 +251,18 @@ mgttl = 20;
 hpop = 22;
 htxt = 14;
 wFig = 800;
-str_txt = 'degeneracy';
+str0 = 'degeneracy';
+str1 = 'transition paths';
 str_lst = {'Transition paths'};
 
 % calculate dimensions
+D = size(degen,1);
 hFig = round(wFig/3);
-waxes1 = round(wFig/3);
-wlst = (wFig-waxes1-4*mg)/6;
-waxes2 = ((wFig-waxes1-4*mg)-wlst)/2;
-hlst = (hFig-2*mg)-htxt-hpop-mg;
+wleft = round(wFig/3);
+waxes1 = (wleft-mg)/D;
+wlst = (wFig-wleft-4*mg)/6;
+waxes2 = ((wFig-wleft-4*mg)-wlst)/2;
+hlst = (hFig-2*mg)-2*htxt-hpop-mg;
 haxes = hFig-2*mg-mgttl;
 
 gd = struct();
@@ -270,20 +273,22 @@ h_fig = figure('units','pixels','position',[0,0,wFig,hFig],'name',...
 gd.figure_testDPH = h_fig;
 
 % left axes
-D = size(degen,1);
+x = mg;
+y = mg;
 for d = 1:D
-    gd.axes_perf(d) = subplot(1,3*D,d);
-    if d==1
-        shift = gd.axes_perf(d).Position(3);
-    end
-    gd.axes_perf(d).Position(1) = gd.axes_perf(d).Position(1)-shift;
+    gd.axes_perf(d) = axes('parent',h_fig,'units','pixels','position',...
+        [x,y,waxes1,haxes]);
+    pos = getRealPosAxes([x,y,waxes1,haxes],...
+        get(gd.axes_perf(d),'tightinset'),'traces');
+    set(gd.axes_perf(d),'position',pos);
+    x = x+waxes1;
 end
 
 % popup menu
-x = waxes1 + mg;
+x = wleft + mg;
 y = hFig-mg-htxt;
 gd.text_degeneracy = uicontrol('style','text','parent',h_fig,'units',...
-    'pixels','position',[x,y,wlst,htxt],'string',str_txt);
+    'pixels','position',[x,y,wlst,htxt],'string',str0);
 
 y = y-hpop;
 str_pop = cell(1,D);
@@ -295,7 +300,11 @@ gd.popup_degeneracy = uicontrol('style','popup','parent',h_fig,'units',...
     {@degenTest_popup_degeneracy_Callback,h_fig});
 
 % list
-y = y-mg-hlst;
+y = y-mg-htxt;
+gd.text_transpath = uicontrol('style','text','parent',h_fig,'units',...
+    'pixels','position',[x,y,wlst,htxt],'string',str1);
+
+y = y-hlst;
 gd.listbox_paths = uicontrol('style','listbox','parent',h_fig,'units',...
     'pixels','position',[x,y,wlst,hlst],'string',str_lst,'min',0,'max',1,...
     'callback',{@degenTest_listbox_paths_Callback,h_fig});
