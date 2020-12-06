@@ -8,9 +8,9 @@ function degenTest_analyzeResults(pname)
 % degenTest_analyzeResults('C:\Users\mimi\Documents\MyDataFolder\degenerated_test\testdata');
 
 % default
-rgb_red = [255,80,80];
-rgb_orange = [255,153,51];
-rgb_green = [102,255,102];
+rgb_red = [255,120,120];
+rgb_orange = [255,213,111];
+rgb_green = [162,255,162];
 
 if pname(end)~=filesep
     pname = [pname,filesep];
@@ -61,6 +61,42 @@ for d = 1:D
     k{d} = cat(3,res.trans_rates,res.trans_rates_err);
     simdat{d} = res.simdat;
     clear('res');
+    
+    % sort according to FRET value
+    [FRET0{d},ord0] = sort(FRET0{d});
+    k0_ord = k0{d};
+    for j1 = 1:numel(FRET0{d}) 
+        for j2 = 1:numel(FRET0{d})
+            k0_ord(j1,j2) = k0{d}(ord0(j1),ord0(j2));
+        end
+    end
+    k0{d} = k0_ord;
+    [FRET{d},ord] = sort(FRET{d});
+    k_ord = k{d};
+    for j1 = 1:numel(FRET{d})
+        for j2 = 1:numel(FRET{d})
+            k_ord(j1,j2,:) = k{d}(ord(j1),ord(j2),:);
+        end
+    end
+    k{d} = k_ord;
+    
+    % sort according to lifetime
+    r0 = sum(k0{d},2)';
+    [r0,ord0] = sort(r0);
+    for j1 = 1:numel(r0) 
+        for j2 = 1:numel(r0)
+            k0_ord(j1,j2) = k0{d}(ord0(j1),ord0(j2));
+        end
+    end
+    k0{d} = k0_ord;
+    r = sum(k{d}(:,:,1),2)';
+    [r,ord] = sort(r);
+    for j1 = 1:numel(r)
+        for j2 = 1:numel(r)
+            k_ord(j1,j2,:) = k{d}(ord(j1),ord(j2),:);
+        end
+    end
+    k{d} = k_ord;
     
     % store state degeneracy
     vals = unique(FRET0{d});
@@ -181,15 +217,17 @@ end
 title(gd.axes_diagramGT,'GT');
 title(gd.axes_diagram,'Analysis');
 
-% draw new diagram
+% collect model and sort parameters
 dgn = gd.popup_degeneracy.Value;
 pth = gd.listbox_paths.Value;
-
 k0 = gd.rates{dgn}{1,pth};
 k = gd.rates{dgn}{2,pth}(:,:,1);
 FRET0 = gd.states{dgn}{1,pth};
 FRET = gd.states{dgn}{2,pth};
+
+% draw reference diagramm
 drawDiagram(gd.axes_diagramGT,FRET0,k0,0,gd.pop0{dgn}{pth});
+gd.axes_diagramGT.Visible = 'on';
 
 % calculate exp. state rel. pop
 J = numel(FRET);
@@ -199,13 +237,17 @@ dtSum = sum(dt(:,1));
 for j = 1:J
     pop(j) = sum(dt(dt(:,3)==j,1))/dtSum;
 end
+
+% draw experimental diagram
 drawDiagram(gd.axes_diagram,FRET,k,0,pop);
+gd.axes_diagram.Visible = 'on';
 
 
 function h_fig = buildDegenTestFig(degen)
 
 % defaults
 mg = 5;
+mgttl = 20;
 hpop = 22;
 htxt = 14;
 wFig = 800;
@@ -218,7 +260,7 @@ waxes1 = round(wFig/3);
 wlst = (wFig-waxes1-4*mg)/6;
 waxes2 = ((wFig-waxes1-4*mg)-wlst)/2;
 hlst = (hFig-2*mg)-htxt-hpop-mg;
-haxes = hFig-2*mg;
+haxes = hFig-2*mg-mgttl;
 
 gd = struct();
 
@@ -260,6 +302,7 @@ gd.listbox_paths = uicontrol('style','listbox','parent',h_fig,'units',...
 
 % right axes
 x = x+wlst+mg;
+y = mg;
 gd.axes_diagramGT = axes('parent',h_fig,'units','pixels','position',...
     [x,y,waxes2,haxes],'xtick',[],'ytick',[]);
 
