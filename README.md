@@ -12,11 +12,11 @@ Both methods are part of the analysis workflow of MASH-FRET's Transition analysi
 ## Method
 
 To address these problems, single molecule state sequences will be simulated with different state degeneracies (goal 1) and for all different transition paths allowed for each state configuration (goal 2). 
-Simulated state sequences will be analyzed in MASH-FRET and the analysis output, in terms of number of degenerated states and transition paths, will be compared to the simulation ground truth to evaluate goals 1 and 2.
+Simulated state sequences will be analyzed in MASH-FRET and the analysis output, in terms of number of degenerated states and transition paths, will be compared to the simulation ground truth to evaluate goals 1 and 2
 
 ## How to
 
-DPH-test uses MASH-FRET interface. Therefore, before running any DPH-test script:
+DPH-test uses MASH-FRET interface. Before running any routine script, perform these two steps:
 1. open MASH-FRET by following [these steps](https://rna-fretools.github.io/MASH-FRET/Getting_started.html#installation)
 2. add DPH-test to MATLAB's search path by going to `Home → Set Path → Add Folder`
 
@@ -31,7 +31,12 @@ Run the command: `degenTest_analyzeSimData('C:\testdata')` to analyze and write 
 
 ***Note:** The analysis procedure consists in (1) determining state degeneracies by training discrete phase-type (DPH) distributions of complexities 1 to 4 and selecting DPHs that minimize the BIC and, (2) optimizing ensemble HMMs on states sequences with the Baum-Welch algorithm. This took 5 days to complete with an i7 CPU (2.20GHz) and 8GB of RAM.*   
    
-### Evaluate and summarize analysis performances 
-Run the command: `degenTest_analyzeSimData('C:\testdata')` to compare models inferred by MASH-FRET with the ground truth via the graphical interface below
+### Summarize and evaluate performances 
+Run the command `degenTest_analyzeSimData('C:\testdata')` to compare models inferred by MASH-FRET with the ground truth via the graphical interface below:
 
 <img src="images/DPH-test_perf-summary.png">
+
+<span style="color:#66ff66">Green</span>: MASH-FRET found the correct number of degenerated states and the correct transtion path
+
+Orange: MASH-FRET found the correct number of degenerated states but the wrong transition path
+Red: MASH-FRET found the wrong number of degenerated states
