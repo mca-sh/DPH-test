@@ -1,7 +1,5 @@
 # DPH-test
 
-## Description
-
 DPH-test contains automated routine scripts that control [MASH-FRET](https://github.com/RNA-FRETools/MASH-FRET) interface.
 These routines are used in order to assess:
 1. The use of **discrete phase-type distributions (DPH)** to model in single molecule **kinetic heterogeneity** in ensemble dwell time histogram
