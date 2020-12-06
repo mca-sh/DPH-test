@@ -21,10 +21,12 @@ For instance, simulate data sets with state degeneracies 1-1, 1-2, 1-3 and 2-2 a
 1. Run the command: `degenTest_createPresetFiles(3,4,'C:\testdata')` to export simulated preset files with max. 3 degenerated level per state value and max. 4 states in total, and where `C:\testdata` is your destination directory
 2. Run the comand `degenTest_generateSimData('C:\testdata')` to simulate and write data sets to files
 
-#### Analyze simulated data sets with MASH-FRET
-Run the command: `degenTest_analyzeSimData('C:\testdata')` to analyze and write results to files
+***Note:** Simulating and analyzing models with 5 states or more (meaning, 5000 transition paths or much more) will cost an exponentially growing time.*
 
+#### Analyze simulated data sets with MASH-FRET
 The analysis procedure consists in (1) determining state degeneracies by training discrete phase-type (DPH) distributions of complexities 1 to 4 and selecting DPHs that minimize the BIC and, (2) optimizing ensemble HMMs on states sequences with the Baum-Welch algorithm.
+
+Run the command: `degenTest_analyzeSimData('C:\testdata')` to analyze and write results to files
 
 ***Note:** This took 5 days to complete with an i7 CPU (2.20GHz) and 8GB of RAM.*   
    
