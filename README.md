@@ -18,6 +18,7 @@ Simulated state sequences will be analyzed in MASH-FRET and the analysis output,
 
 DPH-test contains all the scripts used to:
 * **Simulate 2-state synthetic data sets** (calling MASH-FRET's Simulation module) with state degeneracies 1-1, 1-2, 1-3 and 2-2 and for all possible transition paths (2, 13, 150 and 150 paths)
-* **Analyze simulated data** (calling MASH-FRET's Transition analysis module): (1) determine state degeneracies by training discrete phase-type (DPH) distributions of complexities 1 to 4 and selecting DPHs that minimize the BIC and, (2) optimize ensemble HMM on states sequences with the Baum-Welch algorithm
+* **Analyze simulated data** (calling MASH-FRET's Transition analysis module): For each simulated data set: (1) determines state degeneracies by training discrete phase-type (DPH) distributions of complexities 1 to 4 and selecting DPHs that minimize the BIC and, (2) optimizes ensemble HMM on states sequences with the Baum-Welch algorithm. This took 5 days to complete with an i7 CPU (2.20GHz) and 8GB of RAM.
 * **Evaluate and summarize analysis performances** by comparing state degeneracies and HMM parameters to the simulated ground truth
 
+![](DPH-test_perf-summary.png "Performance summary")
