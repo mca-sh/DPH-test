@@ -70,8 +70,10 @@ for d = 1:D
             k0_ord(j1,j2) = k0{d}(ord0(j1),ord0(j2));
         end
     end
+    pop0{d} = pop0{d}(ord0);
     k0{d} = k0_ord;
     [FRET{d},ord] = sort(FRET{d});
+    
     k_ord = k{d};
     for j1 = 1:numel(FRET{d})
         for j2 = 1:numel(FRET{d})
@@ -79,6 +81,12 @@ for d = 1:D
         end
     end
     k{d} = k_ord;
+    dt_ord = simdat{d}.dt;
+    for j = 1:numel(FRET{d})
+        dt_ord(simdat{d}.dt(:,3)==ord(j),3) = j;
+        dt_ord(simdat{d}.dt(:,4)==ord(j),4) = j;
+    end
+    simdat{d}.dt = dt_ord;
     
     % sort according to lifetime
     r0 = sum(k0{d},2)';
@@ -89,6 +97,9 @@ for d = 1:D
         end
     end
     k0{d} = k0_ord;
+    pop0{d} = pop0{d}(ord0);
+    FRET0{d} = FRET0{d}(ord0);
+    
     r = sum(k{d}(:,:,1),2)';
     [r,ord] = sort(r);
     for j1 = 1:numel(r)
@@ -97,6 +108,13 @@ for d = 1:D
         end
     end
     k{d} = k_ord;
+    FRET{d} = FRET{d}(ord);
+    dt_ord = simdat{d}.dt;
+    for j = 1:numel(FRET{d})
+        dt_ord(simdat{d}.dt(:,3)==ord(j),3) = j;
+        dt_ord(simdat{d}.dt(:,4)==ord(j),4) = j;
+    end
+    simdat{d}.dt = dt_ord;
     
     % store state degeneracy
     vals = unique(FRET0{d});
@@ -107,7 +125,8 @@ for d = 1:D
         numel(find(FRET{d}==vals(2)))];
     
     % store transition path index
-    pathids(d) = str2num(dlist(d,1).name((length('presets_1-1-')+1):end));
+    lbl = dlist(d,1).name((length('presets_1-1-')+1):end);
+    pathids(d) = str2num(strrep(lbl,'-','.'));
 end
 excl = pathids==0;
 pathids(excl) = [];
@@ -342,7 +361,7 @@ for pth = 1:nPth
             rgb_str = sprintf('rgb(%i,%i,%i)',gd.rgb_green);
     end
     str_lst{pth} = sprintf(['<html><span style= "background-color: ',...
-        rgb_str,';">%i</span></html>'],gd.pthids{dgn}(pth));
+        rgb_str,';">%.1f</span></html>'],gd.pthids{dgn}(pth));
 end
 gd.listbox_paths.Value = 1;
 gd.listbox_paths.String = str_lst;
