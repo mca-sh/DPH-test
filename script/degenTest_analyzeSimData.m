@@ -12,7 +12,8 @@ function degenTest_analyzeSimData(pname)
 
 % default
 V = 2; % number of states values
-nRep = 5; % number of GMM iniializations
+maxIter = 100; % max. k-mean iterations
+nRep = 5; % number of HMM iniializations
 Dmax = 4; % max. number of degenerated states
 
 if pname(end)~=filesep
@@ -73,20 +74,25 @@ for d = 1:D
     popupmenu_TDPdataType_Callback(h.popupmenu_TDPdataType,[],h_fig);
 
     % set TDP plot
-    h.checkbox_TDP_statics.Value = 0;
+    h.checkbox_TDP_statics.Value = 1;
     checkbox_TDP_statics_Callback(h.checkbox_TDP_statics,[],h_fig);
+    pushbutton_TDPupdatePlot_Callback(h.pushbutton_TDPupdatePlot,[],h_fig);
 
     % train GMM
-    fprintf('train GMM ...\n');
-    h.edit_TDPmaxiter.String = num2str(nRep);
+    fprintf('cluster transitions ...\n');
+    h.popupmenu_TA_clstMeth.Value = 1; % kmean
+    popupmenu_TA_clstMeth_Callback(h.popupmenu_TA_clstMeth,[],h_fig);
+    h.edit_TDPmaxiter.String = num2str(maxIter);
     edit_TDPmaxiter_Callback(h.edit_TDPmaxiter,[],h_fig);
     h.edit_TDPnStates.String = num2str(V);
     edit_TDPnStates_Callback(h.edit_TDPnStates,[],h_fig);
+    pushbutton_TDPautoStart_Callback(h.pushbutton_TDPautoStart,[],h_fig);
     pushbutton_TDPupdateClust_Callback(h.pushbutton_TDPupdateClust,[],...
         h_fig)
 
     % optimize model
     fprintf('train HMM ...\n');
+    
     h.edit_TA_mdlRestartNb.String = num2str(nRep);
     edit_TA_mdlRestartNb_Callback(h.edit_TA_mdlRestartNb,[],h_fig);
     h.edit_TA_mdlJmax.String = num2str(Dmax);
