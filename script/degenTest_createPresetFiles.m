@@ -17,7 +17,8 @@ function degenTest_createPresetFiles(Dmax,Jmax,pname)
 % default
 vals = [0.2,0.7]; % state values
 N = 250; % number of trajectories
-wmin = 0.1; % minimum random
+rdmin = 1; % minimum random number
+rdmax = 10; % maximum random number
 
 if pname(end)~=filesep
     pname = [pname,filesep];
@@ -53,12 +54,12 @@ for d1 = 1:Dmax
         mat = trans_mat{J}(:,:,incl);
         
         % get FRET states
-        FRET = repmat(...
+        FRET0 = repmat(...
             [repmat([vals(1),0],[d1,1]);repmat([vals(2),0],[d2,1])],[1,1,N]);
         
         % get state lifetimes
         tau = zeros(1,J);
-        rd = logspace(-1,3,d1+2);
+        rd = logspace(-1,3,d1+2); % log-distributed state lifetimes
         tau(degen{1}) = rd(2:end-1);
         rd = logspace(-1,3,d2+2);
         tau(degen{2}) = rd(2:end-1);
@@ -70,17 +71,25 @@ for d1 = 1:Dmax
         nMat = size(mat,3);
         for m = 1:nMat
             % get transition rate coefficients
-            w = wmin + rand(J);
+            rdnb = round(1./rand(J));
+            rdnb(rdnb<rdmin) = rdmin;
+            rdnb(rdnb>rdmax) = rdmax;
+            w = 1./rdnb;
             w(~mat(:,:,m)) = 0;
             w = w./repmat(sum(w,2),[1,J]);
             w(isnan(w)) = 0;
-            trans_rates = repmat(w.*repmat(r,1,J),[1,1,N]);
             
-            % save presets to file
-            fname = sprintf('presets_%i-%i-%i.mat',d1,d2,m);
-            save([pname,fname],'FRET','trans_rates','ini_prob','-mat');
-            fprintf(['Presets for [%i,%i] complexity (scheme %i) saved to',...
-                ' file: %s\n'],d1,d2,m,fname);
+            for shft = 0:size(FRET0,1)-1
+                r = circshift(r,shft);
+                FRET = circshift(FRET0,shft);
+                trans_rates = repmat(w.*repmat(r,1,J),[1,1,N]);
+
+                % save presets to file
+                fname = sprintf('presets_%i-%i-%03.0f-%i.mat',d1,d2,m,shft);
+                save([pname,fname],'FRET','trans_rates','ini_prob','-mat');
+                fprintf(['Presets for complexity [%i,%i], scheme %i, ',...
+                    'shift %i saved to file: %s\n'],d1,d2,m,shft,fname);
+            end
         end
     end
 end
