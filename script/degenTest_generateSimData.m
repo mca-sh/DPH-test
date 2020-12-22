@@ -9,6 +9,11 @@ function degenTest_generateSimData(pname)
 % example:
 % degenTest_generateSimData('C:\Users\mimi\Documents\MyDataFolder\degenerated_test\testdata');
 
+% default
+t_exp = 0.2; % bin time (0.2,0.1)
+Lmax = 2000; % maximum trace length (2000, 4000)
+t_bleach = 56; % bleaching time constant (56, none)
+
 if pname(end)~=filesep
     pname = [pname,filesep];
 end
@@ -19,6 +24,16 @@ h = guidata(h_fig);
 prev_mute = h.mute_actions;
 h.mute_actions = true;
 guidata(h_fig,h);
+
+% set up main parameters
+h.edit_length.String = num2str(Lmax);
+edit_length_Callback(h.edit_length,[],h_fig);
+h.edit_simRate.String = num2str(1/t_exp);
+edit_simRate_Callback(h.edit_simRate,[],h_fig);
+h.checkbox_simBleach.Value = t_bleach>0;
+checkbox_simBleach_Callback(h.checkbox_simBleach,[],h_fig);
+h.edit_simBleach.String = num2str(t_bleach);
+edit_simBleach_Callback(h.edit_simBleach,[],h_fig);
 
 % list all preset files
 flist = dir([pname,'*.mat']);
